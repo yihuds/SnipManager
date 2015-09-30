@@ -45,14 +45,12 @@ const int kKEY_ESC_CODE = 53;
 
 - (void)dealloc
 {
-    NSLog(@"manager dealloc");
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
 }
 
 - (void)screenChanged:(NSNotification *)notify
 {
-    NSLog(@"--space changed--%@", notify.userInfo);
     if (self.isWorking) {
         [self endCapture:nil];
     }
@@ -67,9 +65,7 @@ const int kKEY_ESC_CODE = 53;
 
 - (void)startCapture
 {
-    NSString* s =[[self.bundle resourcePath] stringByAppendingPathComponent:@"ScreenCapture_toolbar_arrow_effect.tiff"];
-    NSLog(@"startCapture: %@, %@",s,[[NSImage alloc] initWithContentsOfFile:s]);
-    
+
     if (self.isWorking) return;
     self.isWorking = YES;
     self.arrayRect = [NSMutableArray array];
@@ -106,7 +102,6 @@ const int kKEY_ESC_CODE = 53;
         [windowController.window orderOut:nil];
     }
     [self clearController];
-    NSLog(@"post endcapture:%@", kNotifyCaptureEnd);
     [[NSNotificationCenter defaultCenter] postNotificationName:kNotifyCaptureEnd object:nil userInfo:image == nil ? nil : @{@"image" : image}];
 }
 

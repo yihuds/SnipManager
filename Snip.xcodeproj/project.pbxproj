@@ -133,6 +133,8 @@
 			isa = PBXGroup;
 			children = (
 				06C043691BBBBF1200B3B473 /* Resource */,
+				06EC06A21BBABE1A00D3384D /* SnipManager.h */,
+				06C042C21BBB77AB00B3B473 /* SnipManager.m */,
 				06C042B71BBB77AB00B3B473 /* DrawPathInfo.h */,
 				06C042B81BBB77AB00B3B473 /* DrawPathInfo.m */,
 				06C042B91BBB77AB00B3B473 /* DrawPathView.h */,
@@ -144,7 +146,6 @@
 				06C042BF1BBB77AB00B3B473 /* NSColor+Helper.m */,
 				06C042C01BBB77AB00B3B473 /* SimpleLabelView.h */,
 				06C042C11BBB77AB00B3B473 /* SimpleLabelView.m */,
-				06C042C21BBB77AB00B3B473 /* SnipManager.m */,
 				06C042C31BBB77AB00B3B473 /* SnipUtil.h */,
 				06C042C41BBB77AB00B3B473 /* SnipUtil.m */,
 				06C042C51BBB77AB00B3B473 /* SnipView.h */,
@@ -156,7 +157,6 @@
 				06C042CB1BBB77AB00B3B473 /* SnipWindowController.xib */,
 				06C042CC1BBB77AB00B3B473 /* ToolContainer.h */,
 				06C042CD1BBB77AB00B3B473 /* ToolContainer.m */,
-				06EC06A21BBABE1A00D3384D /* SnipManager.h */,
 				06EC06A41BBABE1A00D3384D /* Info.plist */,
 			);
 			path = SnipManager;

@@ -275,21 +275,18 @@ const int kAdjustKnown = 8;
 - (void)mouseDown:(NSEvent *)event
 {
     if ([event clickCount] == 2) {
-        NSLog(@"double click");
         if ([SnipManager sharedInstance].captureState != CAPTURE_STATE_HILIGHT) {
             [self onOK];
         }
     }
 
     if ([SnipManager sharedInstance].captureState == CAPTURE_STATE_HILIGHT) {
-        NSLog(@"mouse down :%@", NSStringFromPoint([NSEvent mouseLocation]));
         [SnipManager sharedInstance].captureState = CAPTURE_STATE_FIRSTMOUSEDOWN;
         self.startPoint = [NSEvent mouseLocation];
         [self.snipView setupTool];
         [self setupToolClick];
     }
     else if ([SnipManager sharedInstance].captureState == CAPTURE_STATE_ADJUST) {
-        NSLog(@"mouse drag down :%@", NSStringFromPoint([NSEvent mouseLocation]));
         self.startPoint = [NSEvent mouseLocation];
         self.captureWindowRect = [SnipUtil uniformRect:self.captureWindowRect];
         self.dragWindowRect = self.captureWindowRect;
