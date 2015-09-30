@@ -223,6 +223,10 @@ const int kAdjustKnown = 8;
                 [strongSelf.snipView setupDrawPath];
                 [strongSelf.snipView setNeedsDisplay:YES];
                 break;
+            case ActionExport:
+                [strongSelf onExportImage];
+                [[SnipManager sharedInstance] endCapture:nil];
+                break;
             case ActionCancel:
                 [[SnipManager sharedInstance] endCapture:nil];
                 break;
@@ -302,8 +306,6 @@ const int kAdjustKnown = 8;
             self.rectDrawing = YES;
         }
     }
-
-
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
@@ -337,7 +339,6 @@ const int kAdjustKnown = 8;
 
         self.captureWindowRect = NSUnionRect(NSMakeRect(self.startPoint.x, self.startPoint.y, 1, 1), NSMakeRect(self.endPoint.x, self.endPoint.y, 1, 1));
         self.captureWindowRect = NSIntersectionRect(self.captureWindowRect, self.window.frame);
-        NSLog(@"mouse drag :%@", NSStringFromRect(self.captureWindowRect));
         [self redrawView:self.originImage];
     }
     else if ([SnipManager sharedInstance].captureState == CAPTURE_STATE_EDIT) {
@@ -349,7 +350,6 @@ const int kAdjustKnown = 8;
     }
     else if ([SnipManager sharedInstance].captureState == CAPTURE_STATE_ADJUST) {
         if (self.dragDirection == -1) return;
-        NSLog(@"adjust drag dir:%d", self.dragDirection);
         NSPoint mouseLocation = [NSEvent mouseLocation];
         self.endPoint = mouseLocation;
         CGFloat deltaX = self.endPoint.x - self.startPoint.x;
@@ -427,7 +427,6 @@ const int kAdjustKnown = 8;
         if ((int) rect.size.height == 0) rect.size.height = 1;
         self.captureWindowRect = [SnipUtil uniformRect:rect];
         self.startPoint = self.endPoint;
-        NSLog(@"adjust drag :%@", NSStringFromRect(self.dragWindowRect));
         [self.snipView showTip];
         [self redrawView:self.originImage];
     }
@@ -442,22 +441,9 @@ const int kAdjustKnown = 8;
 
 - (void)onOK
 {
+    //获取截屏的图片
+    NSImage *pasteImage = [self getCaptureImage];
     // 把选择的截图保存到粘贴板
-    [self.originImage lockFocus];
-    NSRect rect = NSIntersectionRect(self.captureWindowRect, self.window.frame);
-    [self.snipView.pathView drawFinishCommentInRect:[self.window convertRectFromScreen:rect]];
-    //先设置 下面一个实例
-    NSBitmapImageRep *bits = [[NSBitmapImageRep alloc] initWithFocusedViewRect:[self.window convertRectFromScreen:rect]];
-
-    [self.originImage unlockFocus];
-
-    //再设置后面要用到得 props属性
-    NSDictionary *imageProps = @{NSImageCompressionFactor : @(1.0)};
-
-    //之后 转化为NSData 以便存到文件中
-    NSData *imageData = [bits representationUsingType:NSJPEGFileType properties:imageProps];
-
-    NSImage *pasteImage = [[NSImage alloc] initWithData:imageData];
     if (pasteImage != nil) {
         NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
         [pasteBoard clearContents];
@@ -466,6 +452,46 @@ const int kAdjustKnown = 8;
     [[SnipManager sharedInstance] endCapture:pasteImage];
     [self.window orderOut:nil];
 
+}
+
+- (void)onExportImage {
+    NSImage *pasteImage = [self getCaptureImage];
+    if (pasteImage != nil) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"yyyy-MM-dd-HH-mm-ss";
+        NSString *imagePath = [NSString stringWithFormat:@"%@/snip-%@.png",[[SnipManager sharedInstance] getExportPath],[formatter stringFromDate:[NSDate new]]];
+        [self saveImage:pasteImage atPath:imagePath];
+        NSLog(@"onExportImage: %@",imagePath);
+    }
+}
+
+- (NSImage *)getCaptureImage {
+    [self.originImage lockFocus];
+    NSRect rect = NSIntersectionRect(self.captureWindowRect, self.window.frame);
+    [self.snipView.pathView drawFinishCommentInRect:[self.window convertRectFromScreen:rect]];
+    //先设置 下面一个实例
+    NSBitmapImageRep *bits = [[NSBitmapImageRep alloc] initWithFocusedViewRect:[self.window convertRectFromScreen:rect]];
+    
+    [self.originImage unlockFocus];
+    
+    //再设置后面要用到得 props属性
+    NSDictionary *imageProps = @{NSImageCompressionFactor : @(1.0)};
+    
+    //之后 转化为NSData 以便存到文件中
+    NSData *imageData = [bits representationUsingType:NSJPEGFileType properties:imageProps];
+    
+    return [[NSImage alloc] initWithData:imageData];
+}
+
+- (void)saveImage:(NSImage *)image atPath:(NSString *)path {
+    
+    CGImageRef cgRef = [image CGImageForProposedRect:NULL
+                                             context:nil
+                                               hints:nil];
+    NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
+    [newRep setSize:[image size]];   // if you want the same resolution
+    NSData *pngData = [newRep representationUsingType:NSPNGFileType properties:nil];
+    [pngData writeToFile:path atomically:YES];
 }
 
 @end

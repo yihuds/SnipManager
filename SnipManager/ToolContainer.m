@@ -15,6 +15,7 @@
 @property ImageButton *ellipseButton;
 @property ImageButton *arrowButton;
 @property ImageButton *cancelButton;
+@property ImageButton *exportButton;
 @property ImageButton *okButton;
 @end
 
@@ -32,7 +33,10 @@
 
         _arrowButton = [SnipUtil createButton:[[SnipManager sharedInstance] getImageFromResource:@"ScreenCapture_toolbar_arrow_ineffect.tiff"]  withAlternate:nil];
         _arrowButton.tag = ActionShapeArrow;
-
+        
+        _exportButton = [SnipUtil createButton:[[SnipManager sharedInstance] getImageFromResource:@"ScreenCapture_toolbar_export.tiff"]  withAlternate:nil];
+        _exportButton.tag = ActionExport;
+        
         _cancelButton = [SnipUtil createButton:[[SnipManager sharedInstance] getImageFromResource:@"ScreenCapture_toolbar_cross_normal.tiff"] withAlternate:nil];
         _cancelButton.tag = ActionCancel;
 
@@ -45,6 +49,8 @@
         _ellipseButton.action = @selector(onToolClick:);
         _arrowButton.target = self;
         _arrowButton.action = @selector(onToolClick:);
+        _exportButton.target = self;
+        _exportButton.action = @selector(onToolClick:);
         _cancelButton.target = self;
         _cancelButton.action = @selector(onToolClick:);
         _okButton.target = self;
@@ -53,6 +59,7 @@
         [self addSubview:_rectButton];
         [self addSubview:_ellipseButton];
         [self addSubview:_arrowButton];
+        [self addSubview:_exportButton];
         [self addSubview:_cancelButton];
         [self addSubview:_okButton];
     }
@@ -78,8 +85,9 @@
     [self.rectButton setFrame:NSMakeRect(margin, 0, 28, 26)];
     [self.ellipseButton setFrame:NSMakeRect(margin+step * 1, 0, 28, 26)];
     [self.arrowButton setFrame:NSMakeRect(margin+step * 2, 0, 28, 26)];
-    [self.cancelButton setFrame:NSMakeRect(margin+step * 3, 0, 28, 26)];
-    [self.okButton setFrame:NSMakeRect(margin+step * 4, 0, 28, 26)];
+    [self.exportButton setFrame:NSMakeRect(margin+step * 3, 0, 28, 26)];
+    [self.cancelButton setFrame:NSMakeRect(margin+step * 4, 0, 28, 26)];
+    [self.okButton setFrame:NSMakeRect(margin+step * 5, 0, 28, 26)];
 
 }
 

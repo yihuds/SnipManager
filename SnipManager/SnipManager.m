@@ -16,7 +16,9 @@ const int kBORDER_LINE_COLOR = 0x1191FE;
 const int kKEY_ESC_CODE = 53;
 
 @interface SnipManager ()
-
+{
+    NSString *exportPath;
+}
 @end
 
 @implementation SnipManager
@@ -103,6 +105,29 @@ const int kKEY_ESC_CODE = 53;
     }
     [self clearController];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNotifyCaptureEnd object:nil userInfo:image == nil ? nil : @{@"image" : image}];
+}
+
+- (void)configExportPath:(NSString *)path {
+    exportPath = path;
+}
+
+- (NSString* )getExportPath {
+    if (exportPath) {
+        return [self checkSnipFolder:exportPath];
+    }
+    exportPath = [NSSearchPathForDirectoriesInDomains(NSPicturesDirectory, NSUserDomainMask, YES) firstObject];
+    return [self checkSnipFolder:exportPath];
+}
+
+- (NSString* )checkSnipFolder:(NSString* )rootPath {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:rootPath]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:rootPath attributes:nil];
+    }
+    NSString *path = [NSString stringWithFormat:@"%@/snip",rootPath];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:path attributes:nil];
+    }
+    return path;
 }
 
 - (NSImage *)getImageFromResource:(NSString *) imageName {

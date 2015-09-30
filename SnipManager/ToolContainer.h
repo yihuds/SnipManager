@@ -12,6 +12,7 @@ typedef NS_ENUM(NSInteger, ActionType)
 {
     ActionCancel,
     ActionOK,
+    ActionExport,
     ActionShapeRect,
     ActionShapeEllipse,
     ActionShapeArrow
