@@ -16,4 +16,4 @@ And it's not open source.
 
 #So, I try to do the capture screen sample to support dual monitors.
 <br>
-<img src="QQ20150228-1@2x.png"></img>
+![image](src.png)
